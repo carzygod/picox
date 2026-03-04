@@ -23,7 +23,71 @@ let agentService = null;
 let tray = null;
 let isQuitting = false;
 let closeChoiceInProgress = false;
-let appSettings = { closeBehavior: "ask" };
+let appSettings = { closeBehavior: "ask", language: "en" };
+
+const SUPPORTED_LANGUAGES = new Set(["en", "zh-CN", "ru"]);
+const MAIN_I18N = {
+  en: {
+    appTitle: "picox Desktop",
+    trayTooltip: "picox CLI",
+    trayOpenPanel: "Open Panel",
+    trayQuit: "Quit",
+    closeDialogTitle: "Exit picox CLI",
+    closeDialogMessage: "How should the app behave when you close the window?",
+    closeDialogDetail: "You can change the default behavior later in Settings.",
+    closeDialogRemember: "Remember this choice",
+    closeDialogExit: "Exit completely",
+    closeDialogMinimize: "Minimize to tray",
+    closeDialogCancel: "Cancel",
+    exportConfigTitle: "Export Agent Config",
+    importConfigTitle: "Import Agent Config",
+    exportBackupTitle: "Export Agent Backup",
+    importBackupTitle: "Import Agent Backup"
+  },
+  "zh-CN": {
+    appTitle: "picox 桌面端",
+    trayTooltip: "picox CLI",
+    trayOpenPanel: "打开面板",
+    trayQuit: "退出",
+    closeDialogTitle: "退出 picox CLI",
+    closeDialogMessage: "关闭窗口时，应用应如何处理？",
+    closeDialogDetail: "你可以稍后在设置中修改默认行为。",
+    closeDialogRemember: "记住本次选择",
+    closeDialogExit: "完全退出",
+    closeDialogMinimize: "最小化到托盘",
+    closeDialogCancel: "取消",
+    exportConfigTitle: "导出 Agent 配置",
+    importConfigTitle: "导入 Agent 配置",
+    exportBackupTitle: "导出 Agent 备份",
+    importBackupTitle: "导入 Agent 备份"
+  },
+  ru: {
+    appTitle: "picox Desktop",
+    trayTooltip: "picox CLI",
+    trayOpenPanel: "Открыть панель",
+    trayQuit: "Выход",
+    closeDialogTitle: "Выход из picox CLI",
+    closeDialogMessage: "Как поступать при закрытии окна?",
+    closeDialogDetail: "Поведение по умолчанию можно изменить позже в настройках.",
+    closeDialogRemember: "Запомнить выбор",
+    closeDialogExit: "Выйти полностью",
+    closeDialogMinimize: "Свернуть в трей",
+    closeDialogCancel: "Отмена",
+    exportConfigTitle: "Экспорт конфигурации агента",
+    importConfigTitle: "Импорт конфигурации агента",
+    exportBackupTitle: "Экспорт резервной копии агента",
+    importBackupTitle: "Импорт резервной копии агента"
+  }
+};
+
+function normalizeLanguage(input) {
+  return SUPPORTED_LANGUAGES.has(input) ? input : "en";
+}
+
+function trMain(key) {
+  const lang = normalizeLanguage(appSettings?.language);
+  return MAIN_I18N[lang]?.[key] ?? MAIN_I18N.en[key] ?? key;
+}
 
 function getSettingsPath() {
   return path.join(app.getPath("userData"), "runtime", "ui-settings.json");
@@ -32,22 +96,24 @@ function getSettingsPath() {
 function normalizeSettings(input) {
   const allowed = new Set(["ask", "minimize", "exit"]);
   const closeBehavior = typeof input?.closeBehavior === "string" ? input.closeBehavior : "ask";
+  const language = normalizeLanguage(input?.language);
   return {
-    closeBehavior: allowed.has(closeBehavior) ? closeBehavior : "ask"
+    closeBehavior: allowed.has(closeBehavior) ? closeBehavior : "ask",
+    language
   };
 }
 
 function loadSettings() {
   const filePath = getSettingsPath();
   if (!fs.existsSync(filePath)) {
-    appSettings = { closeBehavior: "ask" };
+    appSettings = { closeBehavior: "ask", language: "en" };
     return appSettings;
   }
   try {
     const raw = JSON.parse(fs.readFileSync(filePath, "utf8"));
     appSettings = normalizeSettings(raw);
   } catch {
-    appSettings = { closeBehavior: "ask" };
+    appSettings = { closeBehavior: "ask", language: "en" };
   }
   return appSettings;
 }
@@ -57,6 +123,7 @@ function saveSettings(patch) {
   const filePath = getSettingsPath();
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, `${JSON.stringify(appSettings, null, 2)}\n`, "utf8");
+  refreshMainLocalization();
   return appSettings;
 }
 
@@ -113,32 +180,45 @@ function showMainWindow() {
 
 function ensureTray() {
   if (tray) {
+    refreshTrayMenu();
     return;
   }
 
   const trayImage = resolveImage(resolveTrayIconPath());
   tray = new Tray(trayImage);
-  tray.setToolTip("picox CLI");
+  refreshTrayMenu();
+  tray.on("double-click", () => showMainWindow());
+}
 
+function refreshTrayMenu() {
+  if (!tray) {
+    return;
+  }
+  tray.setToolTip(trMain("trayTooltip"));
   const menu = Menu.buildFromTemplate([
     {
-      label: "\u6253\u5f00\u9762\u677f",
+      label: trMain("trayOpenPanel"),
       click: () => showMainWindow()
     },
     {
       type: "separator"
     },
     {
-      label: "\u5173\u95ed\u9000\u51fa",
+      label: trMain("trayQuit"),
       click: () => {
         isQuitting = true;
         app.quit();
       }
     }
   ]);
-
   tray.setContextMenu(menu);
-  tray.on("double-click", () => showMainWindow());
+}
+
+function refreshMainLocalization() {
+  refreshTrayMenu();
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.setTitle(trMain("appTitle"));
+  }
 }
 
 function hideToTray() {
@@ -162,14 +242,14 @@ async function handleCloseByBehavior() {
 
   const result = await dialog.showMessageBox(mainWindow, {
     type: "question",
-    buttons: ["\u5f7b\u5e95\u9000\u51fa", "\u6700\u5c0f\u5316\u8fd0\u884c", "\u53d6\u6d88"],
+    buttons: [trMain("closeDialogExit"), trMain("closeDialogMinimize"), trMain("closeDialogCancel")],
     defaultId: 1,
     cancelId: 2,
     noLink: true,
-    title: "\u9000\u51fa picox CLI",
-    message: "\u5173\u95ed\u7a97\u53e3\u65f6\u5982\u4f55\u5904\u7406\uff1f",
-    detail: "\u53ef\u5728\u201c\u8bbe\u7f6e\u201d\u9875\u4fee\u6539\u9ed8\u8ba4\u884c\u4e3a\u3002",
-    checkboxLabel: "\u8bb0\u4f4f\u672c\u6b21\u9009\u62e9",
+    title: trMain("closeDialogTitle"),
+    message: trMain("closeDialogMessage"),
+    detail: trMain("closeDialogDetail"),
+    checkboxLabel: trMain("closeDialogRemember"),
     checkboxChecked: false
   });
 
@@ -198,7 +278,7 @@ function createWindow() {
     minWidth: 1200,
     minHeight: 780,
     backgroundColor: "#050506",
-    title: "picox Desktop",
+    title: trMain("appTitle"),
     icon: iconPath || undefined,
     frame: false,
     autoHideMenuBar: true,
@@ -260,7 +340,7 @@ function setupIpc() {
   ipcMain.handle("agents:config:save", (_event, id, data) => agentService.saveConfig(id, data));
   ipcMain.handle("agents:config:export", async (_event, id) => {
     const result = await dialog.showSaveDialog({
-      title: "Export Agent Config",
+      title: trMain("exportConfigTitle"),
       defaultPath: `${id}-config-${fileTimestamp()}.json`,
       filters: [{ name: "JSON", extensions: ["json"] }]
     });
@@ -271,7 +351,7 @@ function setupIpc() {
   });
   ipcMain.handle("agents:config:import", async (_event, id) => {
     const result = await dialog.showOpenDialog({
-      title: "Import Agent Config",
+      title: trMain("importConfigTitle"),
       properties: ["openFile"],
       filters: [{ name: "JSON", extensions: ["json"] }]
     });
@@ -288,7 +368,7 @@ function setupIpc() {
   ipcMain.handle("agents:backup:create", (_event, id) => agentService.createBackup(id));
   ipcMain.handle("agents:backup:export", async (_event, id) => {
     const result = await dialog.showSaveDialog({
-      title: "Export Agent Backup",
+      title: trMain("exportBackupTitle"),
       defaultPath: `${id}-${fileTimestamp()}.zip`,
       filters: [{ name: "Zip Archive", extensions: ["zip"] }]
     });
@@ -299,7 +379,7 @@ function setupIpc() {
   });
   ipcMain.handle("agents:backup:import", async (_event, preferredName = "") => {
     const result = await dialog.showOpenDialog({
-      title: "Import Agent Backup",
+      title: trMain("importBackupTitle"),
       properties: ["openFile"],
       filters: [{ name: "Zip Archive", extensions: ["zip"] }]
     });
@@ -386,4 +466,5 @@ app.on("before-quit", async () => {
     tray = null;
   }
 });
+
 

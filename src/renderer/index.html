@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,7 +14,7 @@
           <img src="../../assets/logo.png" alt="picox logo" class="brand-logo" />
           <div>
             <h1>picox CLI</h1>
-            <p>Simple desktop shell for picox</p>
+            <p id="brandSubtitle" data-i18n="brand.subtitle">Simple desktop shell for picox</p>
           </div>
         </div>
         <div class="topbar-right no-drag">
@@ -36,13 +36,13 @@
       <main class="layout">
         <aside class="sidebar glass">
           <section class="panel-head">
-            <h2>Agent List</h2>
+            <h2 id="agentListTitle" data-i18n="sidebar.agent_list">Agent List</h2>
           </section>
           <section class="create-box">
-            <button id="createAgentBtn" class="btn btn-primary">Create Agent (Wizard)</button>
+            <button id="createAgentBtn" class="btn btn-primary" data-i18n="sidebar.create_agent">Create Agent (Wizard)</button>
             <div class="row-actions">
-              <button id="importBackupBtn" class="btn btn-soft">Import Backup</button>
-              <button id="refreshAgentsBtn" class="btn btn-soft">Refresh</button>
+              <button id="importBackupBtn" class="btn btn-soft" data-i18n="sidebar.import_backup">Import Backup</button>
+              <button id="refreshAgentsBtn" class="btn btn-soft" data-i18n="sidebar.refresh">Refresh</button>
             </div>
           </section>
           <section id="agentList" class="agent-list"></section>
@@ -52,9 +52,9 @@
           <div class="content-top glass">
             <div id="selectedAgentTitle" class="selected-title">No Agent Selected</div>
             <div class="top-actions">
-              <button id="renameAgentBtn" class="btn btn-soft">Rename</button>
-              <button id="openAgentFolderBtn" class="btn btn-soft">Open Folder</button>
-              <button id="deleteAgentBtn" class="btn btn-danger">Delete</button>
+              <button id="renameAgentBtn" class="btn btn-soft" data-i18n="content.rename">Rename</button>
+              <button id="openAgentFolderBtn" class="btn btn-soft" data-i18n="content.open_folder">Open Folder</button>
+              <button id="deleteAgentBtn" class="btn btn-danger" data-i18n="content.delete">Delete</button>
             </div>
           </div>
 
@@ -71,59 +71,64 @@
 
             <article id="tab-config" class="tab-pane glass">
               <div class="pane-toolbar">
-                <button id="importConfigBtn" class="btn btn-soft">Import Config</button>
-                <button id="exportConfigBtn" class="btn btn-soft">Export Config</button>
-                <button id="reloadConfigBtn" class="btn btn-soft">Reload</button>
+                <button id="importConfigBtn" class="btn btn-soft" data-i18n="config.import">Import Config</button>
+                <button id="exportConfigBtn" class="btn btn-soft" data-i18n="config.export">Export Config</button>
+                <button id="reloadConfigBtn" class="btn btn-soft" data-i18n="config.reload">Reload</button>
               </div>
 
               <div class="config-view-tabs">
-                <button id="quickConfigTabBtn" class="tab-btn active">Quick Config</button>
-                <button id="fullConfigTabBtn" class="tab-btn">Full Config</button>
+                <button id="quickConfigTabBtn" class="tab-btn active" data-i18n="config.quick_tab">Quick Config</button>
+                <button id="fullConfigTabBtn" class="tab-btn" data-i18n="config.full_tab">Full Config</button>
               </div>
 
               <div id="quickConfigPanel" class="config-subpane active">
                 <div class="quick-config-grid">
                   <label class="quick-field">
-                    <span>Agent Name</span>
+                    <span data-i18n="field.agent_name">Agent Name</span>
                     <input id="quickAgentName" type="text" />
                   </label>
                   <label class="quick-field">
-                    <span>Model Alias</span>
-                    <input id="quickModelAlias" type="text" placeholder="e.g. gpt4" />
+                    <span data-i18n="field.model_alias">Model Alias</span>
+                    <input id="quickModelAlias" type="text" data-i18n-placeholder="placeholder.model_alias" placeholder="e.g. gpt4" />
                   </label>
                   <label class="quick-field">
-                    <span>Model Name</span>
-                    <input id="quickModelName" type="text" placeholder="e.g. openai/gpt-5.2" />
+                    <span data-i18n="field.model_name">Model Name</span>
+                    <input id="quickModelName" type="text" data-i18n-placeholder="placeholder.model_name" placeholder="e.g. openai/gpt-5.2" />
                   </label>
                   <label class="quick-field">
-                    <span>API Base</span>
-                    <input id="quickApiBase" type="text" placeholder="e.g. https://api.openai.com/v1" />
+                    <span data-i18n="field.api_base">API Base</span>
+                    <input id="quickApiBase" type="text" data-i18n-placeholder="placeholder.api_base" placeholder="e.g. https://api.openai.com/v1" />
                   </label>
                   <label class="quick-field">
-                    <span>API Key</span>
+                    <span data-i18n="field.api_key">API Key</span>
                     <input id="quickApiKey" type="text" />
                   </label>
                   <label class="quick-field quick-field-checkbox">
-                    <span>Enable Telegram</span>
+                    <span data-i18n="field.enable_telegram">Enable Telegram</span>
                     <input id="quickTelegramEnabled" type="checkbox" />
                   </label>
                   <label class="quick-field">
-                    <span>Telegram Bot Token</span>
+                    <span data-i18n="field.telegram_token">Telegram Bot Token</span>
                     <input id="quickTelegramToken" type="text" />
                   </label>
                   <label class="quick-field">
-                    <span>Allowed User IDs (comma separated)</span>
-                    <input id="quickTelegramAllowFrom" type="text" placeholder="e.g. 123456789, 987654321" />
+                    <span data-i18n="field.telegram_allow">Allowed User IDs (comma separated)</span>
+                    <input
+                      id="quickTelegramAllowFrom"
+                      type="text"
+                      data-i18n-placeholder="placeholder.telegram_allow"
+                      placeholder="e.g. 123456789, 987654321"
+                    />
                   </label>
                 </div>
                 <div class="pane-toolbar">
-                  <button id="saveQuickConfigBtn" class="btn btn-primary">Save Quick Config</button>
+                  <button id="saveQuickConfigBtn" class="btn btn-primary" data-i18n="config.save_quick">Save Quick Config</button>
                 </div>
               </div>
 
               <div id="fullConfigPanel" class="config-subpane">
                 <div class="pane-toolbar">
-                  <button id="saveConfigBtn" class="btn btn-primary">Save Full Config</button>
+                  <button id="saveConfigBtn" class="btn btn-primary" data-i18n="config.save_full">Save Full Config</button>
                 </div>
                 <div id="configEditor" class="config-editor"></div>
               </div>
@@ -131,39 +136,49 @@
 
             <article id="tab-logs" class="tab-pane glass">
               <div class="pane-toolbar">
-                <button id="refreshLogsBtn" class="btn btn-soft">Refresh Logs</button>
-                <button id="clearLogsBtn" class="btn btn-soft">Clear Logs</button>
+                <button id="refreshLogsBtn" class="btn btn-soft" data-i18n="logs.refresh">Refresh Logs</button>
+                <button id="clearLogsBtn" class="btn btn-soft" data-i18n="logs.clear">Clear Logs</button>
               </div>
               <pre id="logViewer" class="log-viewer"></pre>
             </article>
 
             <article id="tab-backups" class="tab-pane glass">
               <div class="pane-toolbar">
-                <button id="createBackupBtn" class="btn btn-primary">Create Backup</button>
-                <button id="exportBackupBtn" class="btn btn-soft">Export Backup</button>
+                <button id="createBackupBtn" class="btn btn-primary" data-i18n="backup.create">Create Backup</button>
+                <button id="exportBackupBtn" class="btn btn-soft" data-i18n="backup.export">Export Backup</button>
               </div>
               <div id="backupList" class="backup-list"></div>
             </article>
 
             <article id="tab-settings" class="tab-pane glass">
               <div class="settings-panel">
-                <h3>Window Close Behavior</h3>
+                <h3 data-i18n="settings.close_behavior_title">Window Close Behavior</h3>
                 <label class="settings-option">
                   <input type="radio" name="closeBehavior" value="ask" checked />
-                  Ask every time
+                  <span data-i18n="settings.close.ask">Ask every time</span>
                 </label>
                 <label class="settings-option">
                   <input type="radio" name="closeBehavior" value="minimize" />
-                  Minimize to tray
+                  <span data-i18n="settings.close.minimize">Minimize to tray</span>
                 </label>
                 <label class="settings-option">
                   <input type="radio" name="closeBehavior" value="exit" />
-                  Exit directly
+                  <span data-i18n="settings.close.exit">Exit directly</span>
+                </label>
+                <label class="quick-field">
+                  <span data-i18n="settings.language">Language</span>
+                  <select id="settingLanguage">
+                    <option value="en">English</option>
+                    <option value="zh-CN">简体中文</option>
+                    <option value="ru">Русский</option>
+                  </select>
                 </label>
                 <div class="pane-toolbar">
-                  <button id="saveSettingsBtn" class="btn btn-primary">Save Settings</button>
+                  <button id="saveSettingsBtn" class="btn btn-primary" data-i18n="settings.save">Save Settings</button>
                 </div>
-                <p class="settings-hint">When set to Ask, close dialog includes a remember checkbox.</p>
+                <p class="settings-hint" data-i18n="settings.hint">
+                  When set to Ask, close dialog includes a remember checkbox.
+                </p>
               </div>
             </article>
           </section>
@@ -174,53 +189,58 @@
     <div id="createWizardModal" class="wizard-mask hidden">
       <div class="wizard-dialog glass">
         <div class="wizard-head">
-          <h3>Create Agent Wizard</h3>
+          <h3 data-i18n="wizard.title">Create Agent Wizard</h3>
           <div id="wizardStepLabel" class="wizard-step-label">Step 1 / 2</div>
         </div>
 
         <div id="wizardStep1" class="wizard-step active">
           <label class="quick-field">
-            <span>Agent Name</span>
+            <span data-i18n="field.agent_name">Agent Name</span>
             <input id="wizardAgentName" type="text" />
           </label>
           <label class="quick-field">
-            <span>Model Alias</span>
+            <span data-i18n="field.model_alias">Model Alias</span>
             <input id="wizardModelAlias" type="text" value="gpt4" />
           </label>
           <label class="quick-field">
-            <span>Model Name</span>
-            <input id="wizardModelName" type="text" placeholder="e.g. openai/gpt-5.2" />
+            <span data-i18n="field.model_name">Model Name</span>
+            <input id="wizardModelName" type="text" data-i18n-placeholder="placeholder.model_name" placeholder="e.g. openai/gpt-5.2" />
           </label>
           <label class="quick-field">
-            <span>API Base</span>
-            <input id="wizardApiBase" type="text" placeholder="e.g. https://api.openai.com/v1" />
+            <span data-i18n="field.api_base">API Base</span>
+            <input id="wizardApiBase" type="text" data-i18n-placeholder="placeholder.api_base" placeholder="e.g. https://api.openai.com/v1" />
           </label>
           <label class="quick-field">
-            <span>API Key</span>
+            <span data-i18n="field.api_key">API Key</span>
             <input id="wizardApiKey" type="text" />
           </label>
         </div>
 
         <div id="wizardStep2" class="wizard-step">
           <label class="quick-field quick-field-checkbox">
-            <span>Enable Telegram</span>
+            <span data-i18n="field.enable_telegram">Enable Telegram</span>
             <input id="wizardTelegramEnabled" type="checkbox" checked />
           </label>
           <label class="quick-field">
-            <span>Telegram Bot Token</span>
+            <span data-i18n="field.telegram_token">Telegram Bot Token</span>
             <input id="wizardTelegramToken" type="text" />
           </label>
           <label class="quick-field">
-            <span>Allowed User IDs (comma separated)</span>
-            <input id="wizardTelegramAllowFrom" type="text" placeholder="e.g. 123456789, 987654321" />
+            <span data-i18n="field.telegram_allow">Allowed User IDs (comma separated)</span>
+            <input
+              id="wizardTelegramAllowFrom"
+              type="text"
+              data-i18n-placeholder="placeholder.telegram_allow"
+              placeholder="e.g. 123456789, 987654321"
+            />
           </label>
         </div>
 
         <div class="wizard-actions">
-          <button id="wizardCancelBtn" class="btn btn-soft">Cancel</button>
-          <button id="wizardPrevBtn" class="btn btn-soft">Back</button>
-          <button id="wizardNextBtn" class="btn btn-primary">Next</button>
-          <button id="wizardSubmitBtn" class="btn btn-primary">Create & Start</button>
+          <button id="wizardCancelBtn" class="btn btn-soft" data-i18n="wizard.cancel">Cancel</button>
+          <button id="wizardPrevBtn" class="btn btn-soft" data-i18n="wizard.back">Back</button>
+          <button id="wizardNextBtn" class="btn btn-primary" data-i18n="wizard.next">Next</button>
+          <button id="wizardSubmitBtn" class="btn btn-primary" data-i18n="wizard.submit">Create & Start</button>
         </div>
       </div>
     </div>
