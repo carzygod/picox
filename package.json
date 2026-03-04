@@ -1,0 +1,80 @@
+{
+  "name": "picox-desktop",
+  "version": "0.1.0",
+  "description": "Electron GUI for picox multi-agent management",
+  "main": "src/main/main.js",
+  "author": "picox contributors",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "pack": "electron-builder --dir",
+    "dist:win": "electron-builder --win nsis --x64",
+    "dist:win:portable": "electron-builder --win portable --x64",
+    "dist:win:all": "electron-builder --win --x64",
+    "dist:mac": "electron-builder --mac dmg --universal"
+  },
+  "build": {
+    "appId": "ai.picox.desktop",
+    "productName": "picox Desktop",
+    "icon": "assets/logo.png",
+    "asar": true,
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/bin",
+        "to": "bin",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/logo.png",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "artifactName": "picox-desktop-${version}-${arch}-setup.${ext}"
+    },
+    "portable": {
+      "artifactName": "picox-desktop-${version}-${arch}-portable.${ext}"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "assets/logo.png",
+      "artifactName": "picox-desktop-${version}-${arch}.${ext}",
+      "category": "public.app-category.developer-tools"
+    }
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  }
+}
+
